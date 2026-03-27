@@ -1,0 +1,37 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from .core.config import settings
+from .routers import auth, habits, schedule, learning, tasks, insights, tracking, notes
+from .core.database import engine, Base
+
+# Create tables (for simplicity, usually use Alembic)
+Base.metadata.create_all(bind=engine)
+
+app = FastAPI(title=settings.PROJECT_NAME)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(auth.router)
+app.include_router(habits.router)
+app.include_router(schedule.router)
+app.include_router(learning.router)
+app.include_router(tasks.router)
+app.include_router(insights.router)
+app.include_router(tracking.router)
+app.include_router(notes.router)
+
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to Personal AI Productivity Tracker API"}
+
+if __name__ == "__main__":
+    import os
+    import uvicorn
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("app.main:app", host="0.0.0.0", port=port)
