@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from datetime import timedelta
 from ..core.database import get_db
-from ..core.security import create_access_token, get_password_hash_v4, verify_password_v4
+from ..core.security import create_access_token, get_password_hash, verify_password
 from ..core.config import settings
 from ..models.models import User
 from ..schemas.user import UserCreate, UserOut, Token
@@ -40,7 +40,7 @@ def signup(user: UserCreate, db: Session = Depends(get_db)):
         print(f"✅ DEBUG: Raw password received for {user.email}. Length: {len(user.password)}")
         
         print(f"🆕 STEP 2: Pre-hashing password for: {user.email}")
-        hashed_password = get_password_hash_v4(user.password)
+        hashed_password = get_password_hash(user.password)
         
         logger.info(f"🆕 STEP 3: Creating User object for: {user.email}")
         new_user = User(
@@ -92,7 +92,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
         logger.info(f"👤 STEP 2: User found: {user.email}. Entering password verification...")
             
         # Password verification triggers bcrypt
-        is_verified = verify_password_v4(form_data.password, user.hashed_password)
+        is_verified = verify_password(form_data.password, user.hashed_password)
         
         if not is_verified:
             logger.warning(f"❌ STEP 3: Password verification FAILED for: {user.email}")

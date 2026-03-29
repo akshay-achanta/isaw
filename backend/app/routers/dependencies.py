@@ -4,7 +4,6 @@ from jose import JWTError, jwt
 from sqlalchemy.orm import Session
 from ..core.config import settings
 from ..core.database import get_db
-from ..core.security import pwd_context
 from ..models.models import User
 from ..schemas.user import TokenData
 import logging
