@@ -7,6 +7,10 @@ import bcrypt
 import hashlib
 import base64
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 # Monkey-patch bcrypt to fix passlib 1.7.4 compatibility with bcrypt 4.0+
 # See: https://github.com/pyca/bcrypt/issues/684
 if not hasattr(bcrypt, "__about__"):
@@ -25,22 +29,21 @@ def create_access_token(subject: Union[str, Any], expires_delta: timedelta = Non
 
 def _preprocess_password(password: str) -> str:
     """
-    Bcrypt has a 72-byte limit. Pre-hashing with SHA-256 ensures 
-    passwords of any length are handled correctly and securely.
-    We use base64 encoding to provide a clean string to passlib.
+    Bcrypt has a 72-byte limit. Pre-hashing with SHA-256 hexdigest 
+    ensures passwords result in a fixed 64-character string.
     """
-    sha256_hash = hashlib.sha256(password.encode("utf-8")).digest()
-    return base64.b64encode(sha256_hash).decode("utf-8")
+    processed = hashlib.sha256(password.encode("utf-8")).hexdigest()
+    logger.debug(f"Preprocessed password length: {len(processed)} chars")
+    return processed
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verifies a plain password against the hashed version."""
     try:
         preprocessed = _preprocess_password(plain_password)
-        return pwd_context.verify(preprocessed, hashed_password)
-    except Exception:
-        # Fallback for legacy passwords without SHA-256 if needed
-        # (Only uncomment if migrating an existing user base)
-        # return pwd_context.verify(plain_password, hashed_password)
+        result = pwd_context.verify(preprocessed, hashed_password)
+        return result
+    except Exception as e:
+        logger.error(f"Error during password verification: {str(e)}")
         return False
 
 def get_password_hash(password: str) -> str:
