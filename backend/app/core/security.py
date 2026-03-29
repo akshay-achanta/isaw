@@ -48,7 +48,9 @@ def _preprocess_password(password: str) -> str:
     
     return final_input
 
-def verify_password(plain_password: str, hashed_password: str) -> bool:
+print("🚀 SECURITY MODULE LOADED")
+
+def verify_password_v4(plain_password: str, hashed_password: str) -> bool:
     """Verifies a plain password against the hashed version."""
     try:
         if not hashed_password:
@@ -63,7 +65,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
         print(f"❌ ERROR in verify_password: {str(e)}")
         return False
 
-def get_password_hash(password: str) -> str:
+def get_password_hash_v4(password: str) -> str:
     """Hashes a password with SHA-256 then Bcrypt."""
     try:
         preprocessed = _preprocess_password(password)
