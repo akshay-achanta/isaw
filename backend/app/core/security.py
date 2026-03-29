@@ -4,6 +4,8 @@ from jose import jwt
 from passlib.context import CryptContext
 from .config import settings
 import bcrypt
+import hashlib
+import base64
 
 # Monkey-patch bcrypt to fix passlib 1.7.4 compatibility with bcrypt 4.0+
 # See: https://github.com/pyca/bcrypt/issues/684
@@ -21,8 +23,27 @@ def create_access_token(subject: Union[str, Any], expires_delta: timedelta = Non
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
     return encoded_jwt
 
+def _preprocess_password(password: str) -> str:
+    """
+    Bcrypt has a 72-byte limit. Pre-hashing with SHA-256 ensures 
+    passwords of any length are handled correctly and securely.
+    We use base64 encoding to provide a clean string to passlib.
+    """
+    sha256_hash = hashlib.sha256(password.encode("utf-8")).digest()
+    return base64.b64encode(sha256_hash).decode("utf-8")
+
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
+    """Verifies a plain password against the hashed version."""
+    try:
+        preprocessed = _preprocess_password(plain_password)
+        return pwd_context.verify(preprocessed, hashed_password)
+    except Exception:
+        # Fallback for legacy passwords without SHA-256 if needed
+        # (Only uncomment if migrating an existing user base)
+        # return pwd_context.verify(plain_password, hashed_password)
+        return False
 
 def get_password_hash(password: str) -> str:
-    return pwd_context.hash(password)
+    """Hashes a password with SHA-256 then Bcrypt."""
+    preprocessed = _preprocess_password(password)
+    return pwd_context.hash(preprocessed)
