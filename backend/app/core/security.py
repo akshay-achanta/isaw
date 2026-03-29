@@ -31,28 +31,36 @@ def _preprocess_password(password: str) -> str:
     """
     Bcrypt has a 72-byte limit. Pre-hashing with SHA-256 hexdigest 
     ensures passwords result in a fixed 64-character string.
+    Added manual truncation [:72] as an extra safety buffer.
     """
     if not password:
-        logger.error("❌ Attempted to hash/verify an empty password")
+        print("❌ CRITICAL: Attempted to hash/verify an empty password")
         raise ValueError("Password cannot be empty")
         
+    # Standard hexdigest is 64 chars, which fits well within 72 bytes.
     processed = hashlib.sha256(password.encode("utf-8")).hexdigest()
-    logger.info(f"✅ Preprocessed password length: {len(processed)} chars")
-    return processed
+    
+    # Final failsafe truncation as requested
+    final_input = processed[:72]
+    
+    print(f"✅ DEBUG: Raw preprocessed length: {len(processed)}")
+    print(f"✅ DEBUG: Final Bcrypt input length: {len(final_input)}")
+    
+    return final_input
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verifies a plain password against the hashed version."""
     try:
         if not hashed_password:
-            logger.warning("⚠️ Cannot verify against empty hash")
+            print("⚠️ WARNING: Cannot verify against empty hash")
             return False
             
         preprocessed = _preprocess_password(plain_password)
         result = pwd_context.verify(preprocessed, hashed_password)
-        logger.info(f"🔑 Password verification result: {result}")
+        print(f"🔑 DEBUG: Password verification result: {result}")
         return result
     except Exception as e:
-        logger.error(f"❌ Error during password verification: {str(e)}")
+        print(f"❌ ERROR in verify_password: {str(e)}")
         return False
 
 def get_password_hash(password: str) -> str:
@@ -60,8 +68,8 @@ def get_password_hash(password: str) -> str:
     try:
         preprocessed = _preprocess_password(password)
         hashed = pwd_context.hash(preprocessed)
-        logger.info("✅ Successfully generated password hash.")
+        print("✅ DEBUG: Successfully generated password hash.")
         return hashed
     except Exception as e:
-        logger.error(f"❌ Error during password hashing: {str(e)}")
+        print(f"❌ ERROR in get_password_hash: {str(e)}")
         raise e

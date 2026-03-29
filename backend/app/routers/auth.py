@@ -29,13 +29,15 @@ def signup(user: UserCreate, db: Session = Depends(get_db)):
         # Check if email exists before attempting creation
         db_user = db.query(User).filter(User.email == user.email).first()
         if db_user:
-            logger.warning(f"⚠️ Signup failed: Email {user.email} already exists.")
+            print(f"⚠️ Signup failed: Email {user.email} already exists.")
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, 
                 detail="Email already registered"
             )
         
-        logger.info(f"🆕 STEP 2: Pre-hashing password for: {user.email}")
+        print(f"✅ DEBUG: Raw password received for {user.email}. Length: {len(user.password)}")
+        
+        print(f"🆕 STEP 2: Pre-hashing password for: {user.email}")
         hashed_password = get_password_hash(user.password)
         
         logger.info(f"🆕 STEP 3: Creating User object for: {user.email}")
