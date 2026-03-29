@@ -71,19 +71,27 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
         user = db.query(User).filter(User.email == form_data.username).first()
         
         if not user:
+            logger.debug(f"🔍 Login failed: User with email {form_data.username} not found.")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="User not found",
                 headers={"WWW-Authenticate": "Bearer"},
             )
+        
+        logger.debug(f"👤 User found: {user.email}. Proceeding to password verification...")
             
         # Password verification triggers bcrypt
-        if not verify_password(form_data.password, user.hashed_password):
+        is_verified = verify_password(form_data.password, user.hashed_password)
+        
+        if not is_verified:
+            logger.debug(f"❌ Login failed: Incorrect password for user {user.email}.")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect password",
                 headers={"WWW-Authenticate": "Bearer"},
             )
+            
+        logger.info(f"✅ Login successful for user: {user.email}")
             
         access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = create_access_token(
