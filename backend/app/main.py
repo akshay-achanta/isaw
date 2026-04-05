@@ -69,7 +69,7 @@ app.include_router(notes.router)
 
 @app.get("/")
 def read_root():
-    return {"message": "Success! ISAW Backend is Online", "status": "online"}
+    return {"message": "Success! AI-Driven Daily Tracker Backend is Online", "status": "online"}
 
 @app.get("/test-db")
 def test_db_connectivity():

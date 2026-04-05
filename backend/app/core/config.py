@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "ISAW Productivity Tracker"
+    PROJECT_NAME: str = "AI-Driven Daily Tracker"
     DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./test.db")
     
     # Auto-fix Railway postgres:// prefix to postgresql://

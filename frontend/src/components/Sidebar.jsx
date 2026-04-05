@@ -32,9 +32,9 @@ const Sidebar = ({ isOpen, onClose }) => {
         ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
         <div className="p-6 flex items-center justify-between">
-          <h1 className="text-3xl font-black bg-gradient-to-r from-primary-600 to-indigo-600 bg-clip-text text-transparent flex items-center gap-2">
-            <Eye className="w-8 h-8 text-primary-600" />
-            ISAW
+          <h1 className="text-2xl font-black bg-gradient-to-r from-primary-600 to-indigo-600 bg-clip-text text-transparent flex flex-col leading-tight">
+            <span className="text-primary-600 flex items-center gap-1"><Eye className="w-6 h-6" /> AI-Driven</span>
+            <span>Daily Tracker</span>
           </h1>
           <button 
             onClick={onClose}

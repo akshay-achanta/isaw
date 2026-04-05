@@ -1,4 +1,4 @@
-# Personal AI Productivity Tracker
+# AI-Driven Daily Tracker
 
 A production-ready productivity tracking application with AI-based insights.
 
