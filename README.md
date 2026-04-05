@@ -2,6 +2,11 @@
 
 A production-ready productivity tracking application with AI-based insights.
 
+## 🚀 Live Deployment
+- **Frontend (UI)**: [https://poetic-reflection-production.up.railway.app](https://poetic-reflection-production.up.railway.app)
+- **Backend (API)**: [https://isaw-production.up.railway.app](https://isaw-production.up.railway.app)
+- **API Documentation**: [https://isaw-production.up.railway.app/docs](https://isaw-production.up.railway.app/docs)
+
 ## Tech Stack
 - **Frontend**: React (Vite), Tailwind CSS v4, Recharts, Lucide Icons, Axios.
 - **Backend**: FastAPI (Python), PostgreSQL, SQLAlchemy.
@@ -48,13 +53,18 @@ A production-ready productivity tracking application with AI-based insights.
    npm run dev
    ```
 
-## Features
-- **Dashboard**: High-level overview of your productivity metrics and AI insights.
-- **Habit Tracker**: Daily habit completion with streak tracking.
-- **Daily Planner**: Time-blocked schedule management.
-- **Learning Log**: Track minutes spent learning and topic categories.
-- **Task System**: Simple and effective todo list with priority levels.
 - **AI Insights**: Rule-based feedback on your productivity patterns.
+
+## 🗺️ Frontend Map & Routes
+- `/dashboard`: Main entry point with total stats, AI suggestions, and trending charts.
+- `/habits`: Manager for your daily routines.
+- `/habits/check`: Simplified "Yes/No" completion screen for the day.
+- `/schedule`: Time-blocked daily planner for deep work and chores.
+- `/tasks`: Simple todo list management.
+- `/learning`: Educational log to track your time investment in new skills.
+- `/notes`: Minimalist catch-all thinking space with theme support.
+- `/summary`: Holistic report page with Excel data export capabilities.
+- `/login` / `/register`: Secure authentication portals.
 
 ## Database Schema
 - `users`: User profiles and authentication.
