@@ -16,6 +16,13 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title=settings.PROJECT_NAME)
 
+@app.middleware("http")
+async def log_requests(request, call_next):
+    logger.info(f"🚀 Incoming Request: {request.method} {request.url.path}")
+    response = await call_next(request)
+    logger.info(f"✅ Response Status: {response.status_code}")
+    return response
+
 # Ensure FastAPI knows it's behind a proxy (for HTTPS redirects)
 app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
 
