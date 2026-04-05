@@ -19,9 +19,17 @@ app = FastAPI(title=settings.PROJECT_NAME)
 # Ensure FastAPI knows it's behind a proxy (for HTTPS redirects)
 app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
 
+origins = [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "http://localhost:8080",
+    "https://poetic-reflection-production.up.railway.app",
+    "https://isaw-production.up.railway.app",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
